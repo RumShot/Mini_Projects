@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" />
+  <title>Joke Generator</title>
+</head>
+<body>
+  <div class="container">
+    <h2>Joke Generator</h2>
+    <label for="name">Insert first and last name</label>
+    <input type="name" id="first_name" style="height:30px;border: 1px solid #D1D1D1;border-radius: 4px;">
+    <input type="name" id="last_name" style="height:30px;border: 1px solid #D1D1D1;border-radius: 4px;">
+    <form>
+      <div>
+        <label for="number">Number of jokes</label>
+        <input type="number" id="number">
+      </div>
+      <div>
+        <button class="get-jokes">Get Jokes</button>
+      </div>
+    </form>
+    <ul class="jokes"></ul>
+  </div>
+  <script>
+document.querySelector('.get-jokes').addEventListener('click', getJokes);
+function getJokes(e) {
+  const number = document.querySelector('input[type="number"]').value;
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `http://api.icndb.com/jokes/random/${number}`, true);
+  xhr.onload = function() {
+    if(this.status === 200) {
+      const response = JSON.parse(this.responseText);
+      let output = '';
+      if(response.type === 'success') {
+        response.value.forEach(function(joke){
+          output += `<li>${joke.joke}</li>`;});
+      } else {output += '<li>Something went wrong</li>';}
+      document.querySelector('.jokes').innerHTML = output.replaceAll('Chuck', document.getElementById("first_name").value).replaceAll('Norris', document.getElementById("last_name").value);}}
+  xhr.send();
+  e.preventDefault();}
+</script>
+</body>
+</html>
